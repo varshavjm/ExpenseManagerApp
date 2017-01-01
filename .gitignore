@@ -42,3 +42,5 @@ captures/
 # .idea files
 .idea
 
+build.gradle
+app/build.gradle
