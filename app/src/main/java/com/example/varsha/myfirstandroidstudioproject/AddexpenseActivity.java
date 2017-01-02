@@ -11,6 +11,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 public class AddexpenseActivity extends AppCompatActivity {
     private Button cancelButton, saveButton;
     private DatePicker datePicker;
@@ -53,6 +55,8 @@ public class AddexpenseActivity extends AppCompatActivity {
             NavUtils.navigateUpFromSameTask(AddexpenseActivity.this);
         }
     };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,12 +64,20 @@ public class AddexpenseActivity extends AppCompatActivity {
         cancelButton = (Button) findViewById(R.id.cancelButton);
         saveButton = (Button) findViewById(R.id.saveButton);
         datePicker = (DatePicker) findViewById(R.id.datePicker2);
+        day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        year = Calendar.getInstance().get(Calendar.YEAR);
+        datePicker.init(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker datePicker, int curYear, int curMonth, int dayOfMonth) {
+                day = dayOfMonth;
+                month = curMonth+1;
+                year = curYear;
+                date = day + "/" + month + "/" + year;
+            }
+        });
         saveButton.setOnClickListener(saveHandler);
         cancelButton.setOnClickListener(cancelHandler);
-        day = datePicker.getDayOfMonth();
-        month = datePicker.getMonth();
-        year = datePicker.getYear();
-        date = day + "/" + month + "/" + year;
         name = (EditText) findViewById(R.id.expenseNameText);
         amount = (EditText) findViewById(R.id.expenseAmountText);
     }

@@ -6,8 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 import android.widget.Toast;
+import android.view.View;
 
+import com.codetroopers.betterpickers.expirationpicker.ExpirationPickerDialogFragment;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendPosition;
@@ -24,6 +27,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import com.codetroopers.betterpickers.expirationpicker.ExpirationPickerBuilder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -34,17 +38,32 @@ import java.util.Map;
  * Created by varsha on 1/1/2017.
  */
 
-public class GenerateSummaryActivity extends Activity {
+public class GenerateSummaryActivity extends AppCompatActivity implements ExpirationPickerDialogFragment.ExpirationPickerDialogHandler {
 
     private PieChart mChart;
+    private Button expirationButton;
     private int selectedMonth=Calendar.getInstance().get(Calendar.MONTH), selectedYear=Calendar.getInstance().get(Calendar.YEAR);
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generatesummary);
+
+        expirationButton = (Button) findViewById(R.id.expirationPicker);
+        expirationButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                ExpirationPickerBuilder epb = new ExpirationPickerBuilder()
+                        .setFragmentManager(getSupportFragmentManager())
+                        .setStyleResId(R.style.BetterPickersDialogFragment)
+                        .setMinYear(2000);
+                epb.show();
+            }
+        });
+
         mChart = (PieChart) findViewById(R.id.chart);
         mChart.setUsePercentValues(true);
         loadNAddDataForGivenMonth();
+
     }
 
     private void addData(Map<String,Float>expenseNameValue) {
@@ -62,7 +81,7 @@ public class GenerateSummaryActivity extends Activity {
         mChart.setData(data);
         customizeChart();
 
-           }
+    }
     private void customizeChart()
     {
         //Customize pie chart label
@@ -130,4 +149,13 @@ public class GenerateSummaryActivity extends Activity {
         addData(pairOfExpNameandAmt);
     }
 
+
+    @Override
+    public void onDialogExpirationSet(int reference, int year, int monthOfYear) {
+        Toast.makeText(getApplicationContext(), "Selected " + monthOfYear + "/" + year , Toast.LENGTH_SHORT).show();
+        expirationButton.setText(monthOfYear + "/" + year);
+        selectedYear = year;
+        selectedMonth = monthOfYear;
+        loadNAddDataForGivenMonth();
+    }
 }

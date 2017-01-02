@@ -16,25 +16,24 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.codetroopers.betterpickers.expirationpicker.ExpirationPickerBuilder;
+import com.codetroopers.betterpickers.expirationpicker.ExpirationPickerDialogFragment;
 
 /**
  * Created by varsha on 10/9/2016.
  */
-public class DeleteexpenseActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class DeleteexpenseActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, ExpirationPickerDialogFragment.ExpirationPickerDialogHandler{
     private Button getExpenseButton,deleteExpenseButton,cancelButton;
     private Spinner viewExpensesSpinner;
-    private DatePicker datePicker;
     private int day,month,year;
     private EditText name, amount;
     private List<String>spinnerArray=null;
     private String expenseName="";
+    private Button expirationButton;
 
     View.OnClickListener deleteExpense=new View.OnClickListener(){
 
         public void onClick (View view){
-            day=datePicker.getDayOfMonth();
-            month=datePicker.getMonth();
-            year=datePicker.getYear();
             DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             db.execSQL("DELETE FROM EXPENSE WHERE NAME='"+expenseName+"' AND DAY='"+ day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'");
@@ -53,14 +52,11 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
     View.OnClickListener getExpense = new View.OnClickListener(){
 
         public void onClick (View view){
-            day=datePicker.getDayOfMonth();
-            month=datePicker.getMonth();
-            year=datePicker.getYear();
             spinnerArray = new ArrayList<String>();
             String column1 = null;
             DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
             SQLiteDatabase db = dbHelper.getWritableDatabase();
-            Cursor c = db.rawQuery("SELECT NAME FROM EXPENSE WHERE DAY='" + day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'", null);
+            Cursor c = db.rawQuery("SELECT NAME FROM EXPENSE WHERE MONTH='" + month + "' AND YEAR='" + year + "'", null);
             if (c.moveToFirst()) {
                 do {
                     //assigning values
@@ -78,7 +74,6 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deleteexpense);
-        datePicker=(DatePicker)findViewById(R.id.deletedatePicker);
         getExpenseButton=(Button)findViewById(R.id.viewExpenseButton);
         getExpenseButton.setOnClickListener(getExpense);
         deleteExpenseButton=(Button)findViewById(R.id.deleteExpenseButton);
@@ -87,6 +82,17 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
         cancelButton.setOnClickListener(cancelHandler);
         viewExpensesSpinner=(Spinner)findViewById(R.id.spinner);
         viewExpensesSpinner.setOnItemSelectedListener(this);
+        expirationButton = (Button) findViewById(R.id.expirationPicker);
+        expirationButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                ExpirationPickerBuilder epb = new ExpirationPickerBuilder()
+                        .setFragmentManager(getSupportFragmentManager())
+                        .setStyleResId(R.style.BetterPickersDialogFragment)
+                        .setMinYear(2000);
+                epb.show();
+            }
+        });
 
 
     }
@@ -107,6 +113,14 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
     public void onNothingSelected(AdapterView<?> adapterView) {
         expenseName="";
 
+    }
+
+    @Override
+    public void onDialogExpirationSet(int reference, int curYear, int monthOfYear) {
+        Toast.makeText(getApplicationContext(), "Selected " + monthOfYear + "/" + year , Toast.LENGTH_SHORT).show();
+        expirationButton.setText(monthOfYear + "/" + year);
+        year = curYear;
+        month = monthOfYear;
     }
 }
 
