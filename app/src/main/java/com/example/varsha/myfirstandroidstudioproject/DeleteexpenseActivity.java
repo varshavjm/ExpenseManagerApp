@@ -63,7 +63,7 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
             Cursor c = db.rawQuery("SELECT NAME FROM EXPENSE WHERE DAY='" + day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'", null);
             if (c.moveToFirst()) {
                 do {
-                    //assiging values
+                    //assigning values
                     column1 = c.getString(0);
                     System.out.println("Expense name:" + column1);
                     spinnerArray.add(column1);

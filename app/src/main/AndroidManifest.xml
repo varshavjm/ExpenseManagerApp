@@ -27,6 +27,10 @@
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
         -->
         <activity
+            android:name=".GenerateSummaryActivity"
+            android:label="Generate Summary"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".DeleteexpenseActivity"
             android:label="Delete Expense"
             android:parentActivityName=".MainActivity" />
