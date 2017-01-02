@@ -16,48 +16,47 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:text="Select you budget month and year"
+        <Button
+            android:text="Select Month and Year"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/textView7"
-            tools:textSize="18sp" />
+            android:id="@+id/expirationPicker" />
 
-        <DatePicker
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:id="@+id/datePicker"
-            android:layout_marginTop="18dp"
-            android:datePickerMode="spinner"
-            android:calendarViewShown="false" />
     </LinearLayout>
 
-    <TextView
-        android:text="Enter your this month's budget"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="174dp"
-        android:id="@+id/textView8"
-        tools:textSize="18sp" />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:layout_marginTop="47dp"
-        android:id="@+id/budgeteditText"
-        android:layout_alignTop="@+id/textView8"
-        android:layout_alignParentStart="true" />
+        <TextView
+            android:text="Enter your this month's budget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView8"
+            tools:textSize="18sp" />
 
-    <Button
-        android:text="Set Budget"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/budgeteditText"
-        android:layout_alignEnd="@+id/budgeteditText"
-        android:layout_marginEnd="11dp"
-        android:layout_marginTop="25dp"
-        android:id="@+id/setBudgetbutton" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:id="@+id/budgetEditText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp">
+
+        <Button
+            android:text="Set Budget"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:id="@+id/setBudgetbutton" />
+    </LinearLayout>
+
 </LinearLayout>
