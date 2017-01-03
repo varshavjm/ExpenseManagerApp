@@ -1,5 +1,6 @@
 package com.example.varsha.myfirstandroidstudioproject;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.NavUtils;
@@ -28,13 +29,13 @@ public class AddexpenseActivity extends AppCompatActivity {
             if (name.getText() != null && !name.getText().toString().equals("")) {
                 values.put("NAME", name.getText().toString());
             } else {
-                Toast.makeText(getApplicationContext(), "Expense name cannot be empty!", Toast.LENGTH_SHORT).show();
+                createDialog("Expense name not set","Expense name cannot be empty!");
                 return;
             }
             if (amount.getText() != null && !amount.getText().toString().equals("")) {
                 values.put("AMOUNT", Double.parseDouble(amount.getText().toString()));
             } else {
-                Toast.makeText(getApplicationContext(), "Amount cannot be empty!", Toast.LENGTH_SHORT).show();
+                createDialog("Expense amount not set","Expense amount cannot be empty!");
                 return;
             }
             values.put("DAY", day);
@@ -81,4 +82,16 @@ public class AddexpenseActivity extends AppCompatActivity {
         name = (EditText) findViewById(R.id.expenseNameText);
         amount = (EditText) findViewById(R.id.expenseAmountText);
     }
+
+
+    private void createDialog(String title, String message)
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(AddexpenseActivity.this);
+        alert.setTitle(title);
+        alert.setMessage(message);
+        alert.setPositiveButton("OK",null);
+        alert.show();
+
+    }
+
 }
