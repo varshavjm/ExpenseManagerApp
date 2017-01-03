@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.Toast;
 import android.view.View;
+import android.widget.TextView;
 
 import com.codetroopers.betterpickers.expirationpicker.ExpirationPickerDialogFragment;
 import com.github.mikephil.charting.charts.PieChart;
@@ -23,9 +24,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
 
 import com.codetroopers.betterpickers.expirationpicker.ExpirationPickerBuilder;
 import java.util.ArrayList;
@@ -42,6 +41,8 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
 
     private PieChart mChart;
     private Button expirationButton;
+    private TextView summarytext;
+    private Float totalExpense=0f;
     private int selectedMonth=Calendar.getInstance().get(Calendar.MONTH), selectedYear=Calendar.getInstance().get(Calendar.YEAR);
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,6 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
         mChart = (PieChart) findViewById(R.id.chart);
         mChart.setUsePercentValues(true);
         loadNAddDataForGivenMonth();
-
     }
 
     private void addData(Map<String,Float>expenseNameValue) {
@@ -135,12 +135,15 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
         Map<String,Float> pairOfExpNameandAmt=new HashMap<String, Float>();
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Float amt;
         Cursor c = db.rawQuery("SELECT NAME,AMOUNT FROM EXPENSE WHERE MONTH='" + selectedMonth + "' AND YEAR='" + selectedYear + "'", null);
         int index=0;
         if (c.moveToFirst()) {
             do {
                 //assigning values
-                pairOfExpNameandAmt.put(new String(c.getString(0)),new Float(c.getFloat(1)));
+                amt=c.getFloat(1);
+                totalExpense+=amt;
+                pairOfExpNameandAmt.put(new String(c.getString(0)),new Float(amt));
             }
             while (c.moveToNext());
         }
@@ -149,7 +152,43 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
         addData(pairOfExpNameandAmt);
     }
 
+    private void generateSummaryBasedOnBudget()
+    {
+        //retrieve the budget and check it with total expenses
+        summarytext=(TextView) findViewById(R.id.summary);
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Float budget=0f;
+        Cursor c = db.rawQuery("SELECT AMOUNT FROM BUDGET WHERE MONTH='" + selectedMonth + "' AND YEAR='" + selectedYear + "'", null);
+        int index=0;
+        if (c.moveToFirst()) {
+                budget=c.getFloat(0);
+        }
+        if(totalExpense<=0.0)
+        {
+            summarytext.setText("Sorry!! You have no expenses for this month");
+            summarytext.setTextColor(Color.rgb(0,221,255));
 
+        }
+
+        else if(totalExpense-budget<0.0f)
+        {
+            summarytext.setText("Kudos! Your expenses "+totalExpense+"$ are within your budget limit by "+(budget-totalExpense)+" $");
+            summarytext.setTextColor(Color.GREEN);
+
+        }
+        else if(totalExpense>budget)
+        {
+
+            summarytext.setText("Your expenses "+totalExpense+"$ have exceeded your budget limit by "+(totalExpense-budget)+" $");
+            summarytext.setTextColor(Color.RED);
+        }
+        else
+        {
+            summarytext.setText("Your expenses "+totalExpense+"$ have reached your budget limit ");
+            summarytext.setTextColor(Color.rgb(255,140,0));
+        }
+    }
     @Override
     public void onDialogExpirationSet(int reference, int year, int monthOfYear) {
         Toast.makeText(getApplicationContext(), "Selected " + monthOfYear + "/" + year , Toast.LENGTH_SHORT).show();
@@ -157,5 +196,6 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
         selectedYear = year;
         selectedMonth = monthOfYear;
         loadNAddDataForGivenMonth();
+        generateSummaryBasedOnBudget();
     }
 }

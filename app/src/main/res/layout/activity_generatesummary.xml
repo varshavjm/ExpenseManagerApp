@@ -16,15 +16,21 @@
             android:id="@+id/expirationPicker" />
 
         <TextView
-            android:text="This is sample text to be replaced my varsha"
+            android:text=""
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:id="@+id/textView" />
+            android:layout_height="wrap_content"
+            android:id="@+id/summary"
+            android:textSize="18sp"
+            android:layout_marginBottom="20dp"
+            android:scrollHorizontally="false"
+            android:ellipsize="none"/>
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="403dp" />
+            android:layout_height="403dp"
+
+            />
     </LinearLayout>
 
 </LinearLayout>

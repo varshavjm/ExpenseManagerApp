@@ -105,8 +105,20 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
         expenseName = adapterView.getItemAtPosition(position).toString();
-        Toast.makeText(getApplicationContext(),expenseName, Toast.LENGTH_SHORT).show();
+        //Write your code here
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT DAY FROM EXPENSE WHERE NAME='" + expenseName + "' AND MONTH='"+month+"' AND YEAR='"+year+"'", null);
+        if (c.moveToFirst()) {
+            do {
+                //assigning values
+                day=c.getInt(0);
+            }
+            while (c.moveToNext());
+        }
 
+
+        Toast.makeText(getApplicationContext(),expenseName, Toast.LENGTH_SHORT).show();
     }
 
     @Override
