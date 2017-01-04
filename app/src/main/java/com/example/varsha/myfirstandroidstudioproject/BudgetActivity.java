@@ -75,7 +75,6 @@ public class BudgetActivity extends AppCompatActivity implements ExpirationPicke
     public void addEntryToBudgetTable()
     {
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         if(!budgetAmount.getText().toString().equals("") && budgetAmount.getText()!=null)
@@ -86,7 +85,7 @@ public class BudgetActivity extends AppCompatActivity implements ExpirationPicke
         values.put("YEAR", selectedYear);
 
 // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert("BUDGET", null, values);
+        long newRowId = dbHelper.insert("BUDGET", values);
         if (newRowId > 0)
             Toast.makeText(getApplicationContext(), "Data saved with rowID " + newRowId, Toast.LENGTH_SHORT).show();
         else

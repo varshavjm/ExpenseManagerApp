@@ -1,10 +1,12 @@
 package com.example.varsha.myfirstandroidstudioproject;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.Toast;
@@ -43,7 +45,7 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
     private Button expirationButton;
     private TextView summarytext;
     private Float totalExpense=0f;
-    private int selectedMonth=Calendar.getInstance().get(Calendar.MONTH), selectedYear=Calendar.getInstance().get(Calendar.YEAR);
+    private int selectedMonth=((Calendar.getInstance().get(Calendar.MONTH))+1), selectedYear=Calendar.getInstance().get(Calendar.YEAR);
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,10 +136,10 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
         Calendar calendar=Calendar.getInstance();
         Map<String,Float> pairOfExpNameandAmt=new HashMap<String, Float>();
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         Float amt;
-        Cursor c = db.rawQuery("SELECT NAME,AMOUNT FROM EXPENSE WHERE MONTH='" + selectedMonth + "' AND YEAR='" + selectedYear + "'", null);
+        Cursor c = dbHelper.executeRawQuery("SELECT NAME,AMOUNT FROM EXPENSE WHERE MONTH='" + selectedMonth + "' AND YEAR='" + selectedYear + "'");
         int index=0;
+        totalExpense=0f;
         if (c.moveToFirst()) {
             do {
                 //assigning values
@@ -157,27 +159,43 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
         //retrieve the budget and check it with total expenses
         summarytext=(TextView) findViewById(R.id.summary);
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         Float budget=0f;
-        Cursor c = db.rawQuery("SELECT AMOUNT FROM BUDGET WHERE MONTH='" + selectedMonth + "' AND YEAR='" + selectedYear + "'", null);
+        Cursor c = dbHelper.executeRawQuery("SELECT AMOUNT FROM BUDGET WHERE MONTH='" + selectedMonth + "' AND YEAR='" + selectedYear + "'");
         int index=0;
         if (c.moveToFirst()) {
                 budget=c.getFloat(0);
         }
-        if(totalExpense<=0.0)
+
+        //Validation for monthly budget not set
+        if(Float.compare(totalExpense,0)<=0)
         {
             summarytext.setText("Sorry!! You have no expenses for this month");
             summarytext.setTextColor(Color.rgb(0,221,255));
-
+            return;
+        }
+        if(Float.compare(budget,0)==0)
+        {
+            SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
+            Float defaultBudget=preferences.getFloat("storedBudgetValue",0f);
+            if(Float.compare(defaultBudget,0)<=0)
+            {
+                summarytext.setText("You haven't set budget for this month");
+                summarytext.setTextColor(Color.rgb(238,130,238));
+                return;
+            }
+            else
+            {
+                budget=defaultBudget;
+            }
         }
 
-        else if(totalExpense-budget<0.0f)
+        if(Float.compare(totalExpense-budget,0.0f)>0)
         {
             summarytext.setText("Kudos! Your expenses "+totalExpense+"$ are within your budget limit by "+(budget-totalExpense)+" $");
             summarytext.setTextColor(Color.GREEN);
 
         }
-        else if(totalExpense>budget)
+        else if(Float.compare(totalExpense,budget)>0)
         {
 
             summarytext.setText("Your expenses "+totalExpense+"$ have exceeded your budget limit by "+(totalExpense-budget)+" $");

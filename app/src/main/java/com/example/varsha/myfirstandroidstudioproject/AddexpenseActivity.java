@@ -23,30 +23,8 @@ public class AddexpenseActivity extends AppCompatActivity {
     View.OnClickListener saveHandler = new View.OnClickListener() {
         public void onClick(View view) {
             //store Data in database
-            DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            if (name.getText() != null && !name.getText().toString().equals("")) {
-                values.put("NAME", name.getText().toString());
-            } else {
-                createDialog("Expense name not set","Expense name cannot be empty!");
-                return;
-            }
-            if (amount.getText() != null && !amount.getText().toString().equals("")) {
-                values.put("AMOUNT", Double.parseDouble(amount.getText().toString()));
-            } else {
-                createDialog("Expense amount not set","Expense amount cannot be empty!");
-                return;
-            }
-            values.put("DAY", day);
-            values.put("MONTH", month);
-            values.put("YEAR", year);
-// Insert the new row, returning the primary key value of the new row
-            long newRowId = db.insert("EXPENSE", null, values);
-            if (newRowId > 0)
-                Toast.makeText(getApplicationContext(), "Data saved with rowID " + newRowId, Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(getApplicationContext(), "Error while adding expense!", Toast.LENGTH_SHORT).show();
+
+            insertIntoDatabase();
             NavUtils.navigateUpFromSameTask(AddexpenseActivity.this);
         }
     };
@@ -57,6 +35,33 @@ public class AddexpenseActivity extends AppCompatActivity {
         }
     };
 
+    private void insertIntoDatabase()
+    {
+        //store Data in database
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        ContentValues values = new ContentValues();
+        if (name.getText() != null && !name.getText().toString().equals("")) {
+            values.put("NAME", name.getText().toString());
+        } else {
+            createDialog("Expense name not set","Expense name cannot be empty!");
+            return;
+        }
+        if (amount.getText() != null && !amount.getText().toString().equals("")) {
+            values.put("AMOUNT", Double.parseDouble(amount.getText().toString()));
+        } else {
+            createDialog("Expense amount not set","Expense amount cannot be empty!");
+            return;
+        }
+        values.put("DAY", day);
+        values.put("MONTH", month);
+        values.put("YEAR", year);
+// Insert the new row, returning the primary key value of the new row
+        long newRowId = dbHelper.insert("EXPENSE",values);
+        if (newRowId > 0)
+            Toast.makeText(getApplicationContext(), "Data saved with rowID " + newRowId, Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(getApplicationContext(), "Error while adding expense!", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

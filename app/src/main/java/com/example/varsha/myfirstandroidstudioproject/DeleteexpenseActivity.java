@@ -37,12 +37,13 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
 
     public void deleteExpense(){
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.execSQL("DELETE FROM EXPENSE WHERE NAME='"+expenseName+"' AND DAY='"+ day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'");
-        NavUtils.navigateUpFromSameTask(DeleteexpenseActivity.this);
-        if(expenseName!="")
-            Toast.makeText(getApplicationContext(),"Expense "+expenseName+" successfully deleted!!", Toast.LENGTH_SHORT).show();
-    }
+        if(expenseName!="") {
+            dbHelper.executeRawQuery("DELETE FROM EXPENSE WHERE NAME='" + expenseName + "' AND DAY='" + day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'");
+            NavUtils.navigateUpFromSameTask(DeleteexpenseActivity.this);
+            Toast.makeText(getApplicationContext(), "Expense " + expenseName + " successfully deleted!!", Toast.LENGTH_SHORT).show();
+        }
+
+        }
 
     View.OnClickListener cancelHandler=new View.OnClickListener(){
 
@@ -122,8 +123,7 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
         expenseName = adapterView.getItemAtPosition(position).toString();
         //Write your code here
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT DAY FROM EXPENSE WHERE NAME='" + expenseName + "' AND MONTH='"+month+"' AND YEAR='"+year+"'", null);
+        Cursor c = dbHelper.executeRawQuery("SELECT DAY FROM EXPENSE WHERE NAME='" + expenseName + "' AND MONTH='"+month+"' AND YEAR='"+year+"'");
         if (c.moveToFirst()) {
             do {
                 //assigning values

@@ -1,6 +1,8 @@
 package com.example.varsha.myfirstandroidstudioproject;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -27,5 +29,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(ExpenseConstants.SQL_DELETE_ENTRIES);
         sqLiteDatabase.execSQL(ExpenseConstants.SQL_DELETE_BUDGET);
         onCreate(sqLiteDatabase);
+    }
+
+    public long insert(String table_name, ContentValues values)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long newRowId = db.insert(table_name, null, values);
+        return newRowId;
+    }
+
+    public void delete(String query)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(query);
+    }
+
+    public Cursor executeRawQuery(String rawQuery)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c=db.rawQuery(rawQuery,null);
+        return c;
     }
 }
