@@ -11,11 +11,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
+
 import com.codetroopers.betterpickers.expirationpicker.ExpirationPickerBuilder;
 import com.codetroopers.betterpickers.expirationpicker.ExpirationPickerDialogFragment;
 
@@ -30,18 +33,16 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
     private List<String>spinnerArray=null;
     private String expenseName="";
     private Button expirationButton;
+    private ListView mListView;
 
-    View.OnClickListener deleteExpense=new View.OnClickListener(){
-
-        public void onClick (View view){
-            DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            db.execSQL("DELETE FROM EXPENSE WHERE NAME='"+expenseName+"' AND DAY='"+ day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'");
-            NavUtils.navigateUpFromSameTask(DeleteexpenseActivity.this);
-            if(expenseName!="")
-                Toast.makeText(getApplicationContext(),"Expense "+expenseName+" successfully deleted!!", Toast.LENGTH_SHORT).show();
-        }
-    };
+    public void deleteExpense(){
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("DELETE FROM EXPENSE WHERE NAME='"+expenseName+"' AND DAY='"+ day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'");
+        NavUtils.navigateUpFromSameTask(DeleteexpenseActivity.this);
+        if(expenseName!="")
+            Toast.makeText(getApplicationContext(),"Expense "+expenseName+" successfully deleted!!", Toast.LENGTH_SHORT).show();
+    }
 
     View.OnClickListener cancelHandler=new View.OnClickListener(){
 
@@ -49,35 +50,50 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
             NavUtils.navigateUpFromSameTask(DeleteexpenseActivity.this);
         }
     };
-    View.OnClickListener getExpense = new View.OnClickListener(){
 
-        public void onClick (View view){
-            spinnerArray = new ArrayList<String>();
-            String column1 = null;
-            DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            Cursor c = db.rawQuery("SELECT NAME FROM EXPENSE WHERE MONTH='" + month + "' AND YEAR='" + year + "'", null);
-            if (c.moveToFirst()) {
-                do {
-                    //assigning values
-                    column1 = c.getString(0);
-                    System.out.println("Expense name:" + column1);
-                    spinnerArray.add(column1);
-
-                }
-                while (c.moveToNext());
+    public void fillExpenses(){
+        int i=0;
+        spinnerArray = new ArrayList<String>();
+        String column1;
+        String column2;
+        String column3;
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT NAME,DAY,AMOUNT FROM EXPENSE WHERE MONTH='" + month + "' AND YEAR='" + year + "'", null);
+        final String[][] listItems = new String[c.getCount()][3];
+        if (c.moveToFirst()) {
+            do {
+                //assigning values
+                column1 = c.getString(0);
+                column2 = c.getString(1);
+                column3 = c.getString(2);
+                System.out.println("Expense name:" + column1);
+                spinnerArray.add(column1);
+                listItems[i][0] = column1;
+                listItems[i][1] = column3 + "/-";
+                listItems[i][2] = Integer.toString(month)+"/" + column2 + "/" + Integer.toString(year);
+                i++;
             }
-            loadSpinnerData(spinnerArray);
+            while (c.moveToNext());
         }
-    };
+        loadSpinnerData(spinnerArray);
+        ExpenseAdapter adapter = new ExpenseAdapter(this, listItems);
+        mListView.setAdapter(adapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String[] parts = listItems[i][2].split("/");
+                day = Integer.parseInt(parts[1]);
+                deleteExpense();
+            }
+        });
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_deleteexpense);
-        getExpenseButton=(Button)findViewById(R.id.viewExpenseButton);
-        getExpenseButton.setOnClickListener(getExpense);
         deleteExpenseButton=(Button)findViewById(R.id.deleteExpenseButton);
-        deleteExpenseButton.setOnClickListener(deleteExpense);
         cancelButton=(Button)findViewById(R.id.cancel);
         cancelButton.setOnClickListener(cancelHandler);
         viewExpensesSpinner=(Spinner)findViewById(R.id.spinner);
@@ -93,8 +109,7 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
                 epb.show();
             }
         });
-
-
+        mListView = (ListView) findViewById(R.id.listView);
     }
     public void loadSpinnerData(List<String> s)
     {
@@ -124,7 +139,6 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         expenseName="";
-
     }
 
     @Override
@@ -133,6 +147,7 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
         expirationButton.setText(monthOfYear + "/" + year);
         year = curYear;
         month = monthOfYear;
+        fillExpenses();
     }
 }
 

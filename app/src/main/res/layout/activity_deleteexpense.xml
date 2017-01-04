@@ -1,50 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent"
     tools:context="com.example.varsha.myfirstandroidstudioproject.DeleteexpenseActivity">
 
-    <Button
-        android:text="Select Month and Year"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_above="@+id/lastLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/expirationPicker" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:text="View Expenses"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/viewExpenseButton"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="@android:color/holo_blue_dark" />
+        <Button
+            android:text="Select Month and Year"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/expirationPicker" />
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="400dp"
-        android:layout_marginTop="61dp"
-        android:layout_below="@+id/viewExpenseButton"
-        android:layout_alignParentStart="true"
-        android:layout_height="40dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:text="CANCEL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cancel"
-        android:layout_below="@+id/spinner"
-        android:layout_toEndOf="@+id/viewExpenseButton"
-        android:layout_marginTop="18dp"
-        android:background="@android:color/holo_red_light" />
+            <TextView
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:scrollHorizontally="false"
+                android:background="@drawable/rectangle"
+                android:text="Expense Name" />
+            <TextView
+                android:id="@+id/expenseAmount"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:scrollHorizontally="false"
+                android:background="@drawable/rectangle"
+                android:text="Amount" />
+            <TextView
+                android:id="@+id/expenseDate"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:scrollHorizontally="false"
+                android:background="@drawable/rectangle"
+                android:text="Date      " />
+        </LinearLayout>
 
-    <Button
-        android:text="DELETE EXPENSE"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/cancel"
-        android:layout_alignStart="@+id/deletedatePicker"
-        android:id="@+id/deleteExpenseButton"
-        android:background="@android:color/holo_green_light" />
 
-</LinearLayout>
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/lastLayout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:text="DELETE EXPENSE"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:id="@+id/deleteExpenseButton"
+            android:background="@android:color/holo_green_light"
+            android:layout_weight="1" />
+
+        <Button
+            android:text="CANCEL"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:id="@+id/cancel"
+            android:background="@android:color/holo_red_light"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</RelativeLayout>
