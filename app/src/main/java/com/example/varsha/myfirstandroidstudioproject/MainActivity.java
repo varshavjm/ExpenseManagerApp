@@ -1,21 +1,29 @@
 package com.example.varsha.myfirstandroidstudioproject;
 
 import android.content.ContentValues;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 
 import java.util.Calendar;
 
+import android.widget.EditText;
+
 public class MainActivity extends AppCompatActivity {
     private Button addButton,exitButton, removeButton,budgetButton, summaryButton;
+    FloatingActionButton floatingDefaultBudget;
     private int selectedMonth= Calendar.getInstance().get(Calendar.MONTH)+1;
     private int selectedYear= Calendar.getInstance().get(Calendar.YEAR);
     View.OnClickListener addExpenseHAndler= new View.OnClickListener(){
@@ -50,6 +58,33 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         }
     };
+
+    View.OnClickListener defaultBudgetHandler = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+            final EditText edittext = new EditText(MainActivity.this);
+            edittext.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+            alert.setMessage("Enter Default Monthly Budget");
+            alert.setTitle("Monthly Budget");
+
+            alert.setView(edittext);
+
+            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String defaultBudget = edittext.getText().toString();
+                }
+            });
+
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // what ever you want to do with No option.
+                }
+            });
+
+            alert.show();
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
         summaryButton.setOnClickListener(generateSummaryHandler);
 
         setDefaultBudget();
-
-
+        floatingDefaultBudget = (FloatingActionButton) findViewById(R.id.defaultBudget);
+        floatingDefaultBudget.setOnClickListener(defaultBudgetHandler);
     }
 
     private void setDefaultBudget()

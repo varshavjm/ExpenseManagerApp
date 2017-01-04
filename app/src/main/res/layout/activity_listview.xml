@@ -8,7 +8,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:scrollHorizontally="false"
-        android:background="@drawable/rectangle"
         android:text="Expense Name" />
     <TextView
         android:id="@+id/expenseAmount"
@@ -16,7 +15,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:scrollHorizontally="false"
-        android:background="@drawable/rectangle"
         android:text="Amount" />
     <TextView
         android:id="@+id/expenseDate"
@@ -24,6 +22,5 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:scrollHorizontally="false"
-        android:background="@drawable/rectangle"
-        android:text="Date      " />
+        android:text="Date" />
 </LinearLayout>

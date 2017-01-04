@@ -35,6 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getWritableDatabase();
         long newRowId = db.insert(table_name, null, values);
+        db.close();
         return newRowId;
     }
 
@@ -42,12 +43,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(query);
+        db.close();
     }
 
     public Cursor executeRawQuery(String rawQuery)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor c=db.rawQuery(rawQuery,null);
+        db.close();
         return c;
     }
 }

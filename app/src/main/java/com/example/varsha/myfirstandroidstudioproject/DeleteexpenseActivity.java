@@ -86,6 +86,7 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String[] parts = listItems[i][2].split("/");
                 day = Integer.parseInt(parts[1]);
+                expenseName = listItems[i][0];
                 deleteExpense();
             }
         });
@@ -131,8 +132,6 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
             }
             while (c.moveToNext());
         }
-
-
         Toast.makeText(getApplicationContext(),expenseName, Toast.LENGTH_SHORT).show();
     }
 
@@ -144,9 +143,9 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onDialogExpirationSet(int reference, int curYear, int monthOfYear) {
         Toast.makeText(getApplicationContext(), "Selected " + monthOfYear + "/" + year , Toast.LENGTH_SHORT).show();
-        expirationButton.setText(monthOfYear + "/" + year);
         year = curYear;
         month = monthOfYear;
+        expirationButton.setText(month + "/" + year);
         fillExpenses();
     }
 }
