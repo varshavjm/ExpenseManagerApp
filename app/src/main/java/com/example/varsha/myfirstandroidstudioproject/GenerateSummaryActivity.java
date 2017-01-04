@@ -189,7 +189,7 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
             }
         }
 
-        if(Float.compare(totalExpense-budget,0.0f)>0)
+        if(Float.compare(budget-totalExpense,0.0f)>0)
         {
             summarytext.setText("Kudos! Your expenses "+totalExpense+"$ are within your budget limit by "+(budget-totalExpense)+" $");
             summarytext.setTextColor(Color.GREEN);
@@ -197,7 +197,6 @@ public class GenerateSummaryActivity extends AppCompatActivity implements Expira
         }
         else if(Float.compare(totalExpense,budget)>0)
         {
-
             summarytext.setText("Your expenses "+totalExpense+"$ have exceeded your budget limit by "+(totalExpense-budget)+" $");
             summarytext.setTextColor(Color.RED);
         }

@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         if (c.moveToFirst()) {
             budget=c.getFloat(0);
         }
-        if(budget==0f)
+        if(budget<=0f)
         {
             //used for storing setting level budget value
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
