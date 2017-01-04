@@ -85,6 +85,9 @@ public class BudgetActivity extends AppCompatActivity implements ExpirationPicke
         values.put("YEAR", selectedYear);
 
 // Insert the new row, returning the primary key value of the new row
+
+        //DELETE ALL DEFAULT VALUES SET FOR THE BUDGET AS USER IS GIVING HIS PREFERENCE BASED VALUES
+        dbHelper.delete("DELETE FROM BUDGET WHERE MONTH='" + selectedMonthOfYear + "' AND YEAR='" + selectedYear + "'");
         long newRowId = dbHelper.insert("BUDGET", values);
         if (newRowId > 0)
             Toast.makeText(getApplicationContext(), "Data saved with rowID " + newRowId, Toast.LENGTH_SHORT).show();
@@ -92,8 +95,6 @@ public class BudgetActivity extends AppCompatActivity implements ExpirationPicke
             Toast.makeText(getApplicationContext(), "Error while setting budget!", Toast.LENGTH_SHORT).show();
         //NavUtils.navigateUpFromSameTask(BudgetActivity.this);
     }
-
-
 
     @Override
     public void onDialogExpirationSet(int reference, int year, int monthOfYear) {
