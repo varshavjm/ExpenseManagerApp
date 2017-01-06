@@ -38,7 +38,7 @@ public class DeleteexpenseActivity extends AppCompatActivity implements AdapterV
     public void deleteExpense(){
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         if(expenseName!="") {
-            dbHelper.executeRawQuery("DELETE FROM EXPENSE WHERE NAME='" + expenseName + "' AND DAY='" + day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'");
+            dbHelper.delete("DELETE FROM EXPENSE WHERE NAME='" + expenseName + "' AND DAY='" + day + "' AND MONTH='" + month + "' AND YEAR='" + year + "'");
             NavUtils.navigateUpFromSameTask(DeleteexpenseActivity.this);
             Toast.makeText(getApplicationContext(), "Expense " + expenseName + " successfully deleted!!", Toast.LENGTH_SHORT).show();
         }
