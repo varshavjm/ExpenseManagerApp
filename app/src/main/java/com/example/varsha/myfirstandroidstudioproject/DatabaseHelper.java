@@ -48,7 +48,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor c=db.rawQuery(rawQuery,null);
-        db.close();
         return c;
     }
 }

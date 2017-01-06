@@ -99,8 +99,8 @@ public class BudgetActivity extends AppCompatActivity implements ExpirationPicke
     @Override
     public void onDialogExpirationSet(int reference, int year, int monthOfYear) {
         Toast.makeText(getApplicationContext(), "Selected " + monthOfYear + "/" + year , Toast.LENGTH_SHORT).show();
-        expirationButton.setText(monthOfYear + "/" + year);
         selectedYear = year;
         selectedMonthOfYear = monthOfYear;
+        expirationButton.setText(monthOfYear + "/" + year);
     }
 }

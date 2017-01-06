@@ -2,6 +2,7 @@ package com.example.varsha.myfirstandroidstudioproject;
 
 import android.content.ContentValues;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import java.util.Calendar;
 
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private Button addButton,exitButton, removeButton,budgetButton, summaryButton;
@@ -64,8 +66,10 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
             final EditText edittext = new EditText(MainActivity.this);
+            SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            final Float defaultBudgetValue = preferences.getFloat("storedBudgetValue",0f);
             edittext.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-            alert.setMessage("Enter Default Monthly Budget");
+            alert.setMessage("Current Default Monthly Budget is set to \"" + Float.toString(defaultBudgetValue) + "\" \nEnter new default monthly budget");
             alert.setTitle("Monthly Budget");
 
             alert.setView(edittext);
@@ -73,12 +77,18 @@ public class MainActivity extends AppCompatActivity {
             alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     String defaultBudget = edittext.getText().toString();
+                    SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    preferences.edit().putFloat("storedBudgetValue",Float.parseFloat(defaultBudget)).apply();
+                    Toast.makeText(getApplicationContext(),"New Month budget \"" + defaultBudget + "\"",Toast.LENGTH_SHORT).show();
                 }
             });
 
             alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     // what ever you want to do with No option.
+                    SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    final Float defaultBudgetValue = preferences.getFloat("storedBudgetValue",0f);
+                    Toast.makeText(getApplicationContext(),"Month budget \"" + Float.toString(defaultBudgetValue) + "\"",Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -116,10 +126,9 @@ public class MainActivity extends AppCompatActivity {
         //retrieve
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         Float budget=0f;
-        Cursor c = dbHelper.executeRawQuery("SELECT AMOUNT FROM BUDGET WHERE MONTH='" + selectedMonth + "' AND YEAR='" + selectedYear + "'");
-        int index=0;
-        if (c.moveToFirst()) {
-            budget=c.getFloat(0);
+        Cursor cursor = dbHelper.executeRawQuery("SELECT AMOUNT FROM BUDGET WHERE MONTH='" + selectedMonth + "' AND YEAR='" + selectedYear + "'");
+        if (cursor.moveToFirst()) {
+            budget=cursor.getFloat(0);
         }
         if(budget<=0f)
         {
